@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete SAP ERP Modules & Tables Reference</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary: #0066cc;
+            --secondary: #6c757d;
+            --success: #198754;
+            --light-bg: #f8f9fa;
+            --dark-bg: #212529;
+            --dark-card: #2c3034;
+            --dark-text: #f8f9fa;
+        }
+        
+        body {
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        .dark-mode {
+            background-color: var(--dark-bg);
+            color: var(--dark-text);
+        }
+        
+        .dark-mode .card {
+            background-color: var(--dark-card);
+            border-color: #495057;
+        }
+        
+        .dark-mode .module-header {
+            background-color: #343a40;
+        }
+        
+        .dark-mode .list-group-item {
+            background-color: var(--dark-card);
+            color: var(--dark-text);
+            border-color: #495057;
+        }
+        
+        .navbar {
+            box-shadow: 0 2px 4px rgba(0,0,0,.1);
+        }
+        
+        .module-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+        
+        .module-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        
+        .module-header {
+            background-color: var(--light-bg);
+            padding: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .module-header:hover {
+            background-color: rgba(0,102,204,0.1);
+        }
+        
+        .table-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 0.75rem;
+        }
+        
+        .table-item {
+            background-color: rgba(0,102,204,0.1);
+            border-radius: 4px;
+            padding: 0.5rem;
+            transition: all 0.2s;
+        }
+        
+        .table-item:hover {
+            background-color: rgba(0,102,204,0.2);
+            transform: translateY(-2px);
+        }
+        
+        .module-content {
+            padding: 1rem;
+            display: none;
+        }
+        
+        .sidebar {
+            height: calc(100vh - 56px);
+            overflow-y: auto;
+            position: sticky;
+            top: 56px;
+        }
+        
+        .sidebar .nav-link {
+            padding: 0.5rem 1rem;
+            color: #495057;
+        }
+        
+        .sidebar .nav-link.active {
+            color: var(--primary);
+            background-color: rgba(0,102,204,0.1);
+            font-weight: bold;
+        }
+        
+        .sidebar .nav-link:hover {
+            background-color: rgba(0,102,204,0.05);
+        }
+        
+        .dark-mode .sidebar .nav-link {
+            color: #ced4da;
+        }
+        
+        .search-container {
+            position: sticky;
+            top: 56px;
+            z-index: 100;
+            background: inherit;
+            padding: 1rem 0;
+        }
+        
+        .submodule {
+            margin-top: 1rem;
+            padding-left: 1rem;
+            border-left: 2px solid var(--primary);
+        }
+        
+        .badge-tech {
+            background-color: #6f42c1;
+            color: white;
+        }
+        
+        .badge-func {
+            background-color: #0d6efd;
+            color: white;
+        }
+        
+        #moduleCount {
+            font-size: 0.9rem;
+            margin-left: 0.5rem;
+        }
+        
+        .submodule-header {
+            font-weight: 600;
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 0.25rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .highlight {
+            background-color: #fff3cd;
+            font-weight: 500;
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+        
+        .dark-mode .highlight {
+            background-color: #664d03;
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                height: auto;
+                position: relative;
+                top: 0;
+            }
+            .table-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-database me-2"></i>SAP Tables Reference
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#technical">Technical Modules</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#functional">Functional Modules</a>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    <button id="darkModeToggle" class="btn btn-outline-secondary">
+                        <i class="bi bi-moon"></i>
+                    </button>
+                    <div class="dropdown ms-2">
+                        <button class="btn btn-outline-primary dropdown-toggle" type="button" id="exportDropdown" data-bs-toggle="dropdown">
+                            <i class="bi bi-download"></i> Export
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" id="exportPDF">PDF</a></li>
+                            <li><a class="dropdown-item" href="#" id="exportCSV">CSV</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+                <div class="search-container p-3">
+                    <input type="text" id="searchInput" class="form-control" placeholder="Search modules and tables...">
+                </div>
+                <div class="position-sticky">
+                    <div class="pt-2">
+                        <h6 class="px-3 mt-2 mb-1 text-muted">Technical Modules</h6>
+                        <nav class="nav nav-pills flex-column" id="techModuleNav"></nav>
+                        
+                        <h6 class="px-3 mt-4 mb-1 text-muted">Functional Modules</h6>
+                        <nav class="nav nav-pills flex-column" id="funcModuleNav"></nav>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main content -->
+            <div class="col-md-9 col-lg-10 ms-sm-auto">
+                <div class="p-3">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2>SAP ERP Modules & Tables Reference <span id="moduleCount" class="badge bg-secondary">324 Modules</span></h2>
+                    </div>
+                    
+                    <!-- Technical Modules Section -->
+                    <section id="technical">
+                        <h3 class="mb-3">Technical SAP ERP Modules</h3>
+                        <div class="row" id="technicalModules"></div>
+                    </section>
+                    
+                    <!-- Functional Modules Section -->
+                    <section id="functional" class="mt-5">
+                        <h3 class="mb-3">Functional SAP ERP Modules</h3>
+                        <div class="row" id="functionalModules"></div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Complete SAP Module Data Structure (based on the article)
+        const sapModulesData = {
+            technical: {
+                "ABAP": {
+                    description: "Advanced Business Application Programming is SAP's proprietary programming language used for developing applications for the SAP environment. It is a high-level language that supports object-oriented programming.",
+                    submodules: [
+                        "ABAP 00", "ABAP Workbench", "ALE", "ALV reporting", "ASAP methodology", 
+                        "Business Connector", "Business Server Pages", "Business Workflow", 
+                        "Data Dictionary", "Dialog Programming", "EBP", "EDI", "IDOCS", 
+                        "Internet Application Server", "LSMW", "Menu Painter", 
+                        "Mercator Report Painter", "Report writer", "Repository Information System", 
+                        "SAP Script", "Screen Painter", "Smart forms"
+                    ],
+                    tables: [
+                        {name: "TADIR", description: "Repository objects directory"},
+                        {name: "TRDIR", description: "Program directory"},
+                        {name: "DD02L", description: "SAP Tables definition"},
+                        {name: "TSTC", description: "Transaction codes"},
+                        {name: "TFDIR", description: "Function modules"}
+                    ]
+                },
+                "Basis": {
+                    description: "SAP Basis serves as the technical foundation for all SAP applications. It provides the operating system for all SAP systems and manages communication between applications and databases.",
+                    submodules: [
+                        "ABAP Programming & Runtime Environment", "ABAP Workbench", 
+                        "Application Link Enabling", "Authorization System Monitoring with CCMS Workload Alert Monitor", 
+                        "Basis Services/ Communication Interfaces", "Business Management", 
+                        "Change and Transport System", "Client Server Technology", 
+                        "Common Program Interface Communications", "Computer Aided Test Tool", 
+                        "Computing Center Management System", "Controls & Control Framework", 
+                        "Customizing", "Database Interface, Database Platforms", 
+                        "Documentation & Translation Tools", "Electronic Data Interchange", 
+                        "Fiori", "Front End Services", "Gateway", "HANA", "Middleware", 
+                        "Network Integration", "Object Linking & Embedding", 
+                        "Operating System Platform", "Ready to Run R/3", "Remote Function Calls", 
+                        "SAPUI5", "Security", "Upgrade General"
+                    ],
+                    tables: [
+                        {name: "T000", description: "Clients"},
+                        {name: "USR02", description: "User login data"},
+                        {name: "TBTCO", description: "Background jobs"},
+                        {name: "STXH", description: "SAPscript texts: header"},
+                        {name: "SYST", description: "System information"}
+                    ]
+                },
+                "BI": {
+                    description: "Business Intelligence provides analytical capabilities for SAP systems. It helps organizations to gather, analyze, and interpret business data for better decision-making.",
+                    submodules: [
+                        "BI Platform", "BI Suite—Business Explorer", "Business Objects", 
+                        "Data Warehousing", "Design Build", "Development Technologies", 
+                        "Info Cube", "ODS Structures"
+                    ],
+                    tables: [
+                        {name: "RSDDSTAT", description: "InfoCube statistics"},
+                        {name: "RSRREPDIR", description: "BW reporting directory"},
+                        {name: "RSDDAGGRDIR", description: "Aggregates directory"},
+                        {name: "RSZCOMPDIR", description: "InfoObject compression"},
+                        {name: "RSMONMESS", description: "BI monitoring messages"}
+                    ]
+                },
+                "CA": {
+                    description: "Cross-Application Components provide functionality that's relevant across multiple SAP applications, enabling integration between different modules.",
+                    submodules: [
+                        "Application Link Enabling", "SAP Business Workflow"
+                    ],
+                    tables: [
+                        {name: "SWWWIHEAD", description: "Workflow instances"},
+                        {name: "SWWLOGHIST", description: "Workflow logs"},
+                        {name: "SWWUSERWL", description: "User workflows"},
+                        {name: "EDIDS", description: "IDoc status records"},
+                        {name: "STXD", description: "Text objects"}
+                    ]
+                },
+                "NW": {
+                    description: "NetWeaver is SAP's technology platform that provides the foundation for SAP applications. It enables integration of systems, applications, and data through a common framework.",
+                    submodules: [
+                        "Application Platform", "Business Information Warehouse", 
+                        "Business Intelligence", "Enterprise Portal", "Exchange Infrastructure", 
+                        "Information Integration", "Knowledge Management", "Life Cycle Management", 
+                        "Master data Management", "Mobile Engine", "People Integration", 
+                        "Portal Content", "Process Integration", "Security", "Solution Manager", 
+                        "Visual Composer", "Web Application Server"
+                    ],
+                    tables: [
+                        {name: "SMWORK", description: "Work items"},
+                        {name: "SMMAIN", description: "Solution Manager data"},
+                        {name: "DSVAS", description: "Data services transport requests"},
+                        {name: "SAPUSER", description: "Portal users"},
+                        {name: "CRMD_ORDER", description: "Service requests"}
+                    ]
+                }
+            },
+            functional: {
+                "CO": {
+                    description: "Controlling provides tools for planning, reporting, and monitoring business operations. It helps in cost management, profit analysis, and internal accounting processes.",
+                    submodules: [
+                        "Activity Based Costing", "Cost Centre Accounting", "Material Ledger", 
+                        "Overhead Cost Controlling", "Product Cost Controlling", 
+                        "Profitability Analysis", "Sales Order Costing", "Split Valuation", 
+                        "Transfer Pricing"
+                    ],
+                    tables: [
+                        {name: "COEP", description: "CO document line items"},
+                        {name: "CSKS", description: "Cost centers"},
+                        {name: "COSS", description: "Cost objects"},
+                        {name: "COSP", description: "Cost totals"},
+                        {name: "CEKA", description: "CO object classifications"}
+                    ]
+                },
+                "CRM": {
+                    description: "Customer Relationship Management focuses on managing customer interactions and relationships. It helps in sales, marketing, and customer service functions.",
+                    submodules: [
+                        "Channel Management", "CRM Enterprise", "CRM Sales", "E-Commerce", 
+                        "Field Applications", "Industry Specific CRM", "Interaction Center", 
+                        "Marketing", "Trade Promotion Management"
+                    ],
+                    tables: [
+                        {name: "CRMD_ORDERADM_H", description: "CRM order header"},
+                        {name: "BUT000", description: "Business partner master"},
+                        {name: "CRMD_ACTIVITY", description: "CRM activities"},
+                        {name: "CRMD_CUSTOMER_H", description: "Customer master"},
+                        {name: "CRMD_OPPORTUNITY", description: "Sales opportunities"}
+                    ]
+                },
+                "CS": {
+                    description: "Customer Service enables management of service operations, customer installations, and complaint handling. It helps in managing service contracts and warranties.",
+                    submodules: [
+                        "Controlling", "Service Contracts", "Service Processing", 
+                        "Workflow in Customer Service"
+                    ],
+                    tables: [
+                        {name: "SERV", description: "Service master"},
+                        {name: "VIQMEL", description: "Service notifications"},
+                        {name: "CRMD_SRV_CONF", description: "Service confirmations"},
+                        {name: "CRMM_PRODUCT_I", description: "Product installations"},
+                        {name: "ILOA", description: "Installation location"}
+                    ]
+                },
+                "EC": {
+                    description: "Enterprise Controlling provides tools for strategic planning, consolidation, and monitoring of enterprise goals. It integrates data from different sources for comprehensive reporting.",
+                    submodules: [
+                        "Business Planning and Budgeting", "Consolidation (EC-CS)", 
+                        "Executive Information System", "Profit Center Accounting"
+                    ],
+                    tables: [
+                        {name: "ECPCA", description: "Profit center master data"},
+                        {name: "FAGLFLEXT", description: "General ledger totals"},
+                        {name: "GLPCA", description: "Profit center actual postings"},
+                        {name: "FMGLFLEXA", description: "GL line items by account"},
+                        {name: "FMGLFLEXT", description: "GL totals by account"}
+                    ]
+                },
+                "EPM": {
+                    description: "Enterprise Performance Management provides tools for financial planning, budgeting, and performance measurement. It helps in monitoring and improving business processes.",
+                    submodules: [
+                        "Corporate Close", "Entity Close", "Planning, Budgeting, and Forecasting", 
+                        "Profitability and Cost Management", "Reporting and Disclosure", 
+                        "Strategy Development and Translation"
+                    ],
+                    tables: [
+                        {name: "FMPEP", description: "Performance management plans"},
+                        {name: "FMBCT", description: "Business consolidation transactions"},
+                        {name: "FMPROF", description: "Profitability segments"},
+                        {name: "ADRP", description: "Address parameters"},
+                        {name: "FMBCA", description: "Cost allocations"}
+                    ]
+                },
+                "EHS": {
+                    description: "Environment, Health, and Safety manages environmental protection, hazardous materials safety, industrial hygiene, and occupational health. It ensures compliance with regulations and promotes workplace safety.",
+                    submodules: [
+                        "Basic Data & Tools", "Dangerous Goods Management", 
+                        "Global Label Management", "Industrial Hygiene and Safety", 
+                        "Occupational Health", "Product Safety", "Waste Management"
+                    ],
+                    tables: [
+                        {name: "EHFND_GSRECORD", description: "Global safety records"},
+                        {name: "EHFND_DG", description: "Dangerous goods"},
+                        {name: "EHSM_HCNT", description: "Health incidents"},
+                        {name: "EHSM_OHID", description: "Occupational health"},
+                        {name: "EHSM_RPTD", description: "Safety reports"}
+                    ]
+                },
+                "FI": {
+                    description: "Financial Accounting handles the accounting processes including accounts payable, accounts receivable, general ledger, and asset accounting. It provides reliable financial data for reporting and compliance.",
+                    submodules: [
+                        "Accounts Payable", "Accounts Receivable", "Asset Accounting", 
+                        "Bank Accounting", "Business Planning and Consolidation (BPC)", 
+                        "Closing Cockpit", "Consolidation", "Credit management", 
+                        "Extended Ledger", "Financial Supply Chain Management", 
+                        "Funds Management", "General Ledger Accounting", 
+                        "Group Risk and Compliance (GRC)", "Joint Venture Accounting", 
+                        "Lease Accounting", "New General Ledger", "Real Estate Management", 
+                        "Revenue Accounting and Reporting (RAR)", "S/4 HANA Finance", 
+                        "Special Ledger", "Taxes", "Travel Management"
+                    ],
+                    tables: [
+                        {name: "BKPF", description: "Accounting document header"},
+                        {name: "BSEG", description: "Accounting document segments"},
+                        {name: "ACDOCA", description: "Universal journal entries"},
+                        {name: "SKA1", description: "G/L account master"},
+                        {name: "FAGLFLEXT", description: "G/L account totals"}
+                    ]
+                },
+                "HCM": {
+                    description: "Human Capital Management manages employee data, payroll, benefits, recruitment, and personnel development. It supports the entire employee lifecycle from hiring to retirement.",
+                    submodules: [
+                        "Benefits Administration", "Compensation Management", "Incentive", 
+                        "Information System", "Internet Scenarios", "Organizational Management", 
+                        "Payroll", "Personnel Administration", "Personnel Development", 
+                        "Personnel Planning", "Recruitment", "Self-Service", "SuccessFactors", 
+                        "Talent Management", "Time Management", "Training and Events Management", 
+                        "Travel Management", "Wages", "Workflow"
+                    ],
+                    tables: [
+                        {name: "PA0001", description: "Organizational assignment"},
+                        {name: "PA0002", description: "Personal data"},
+                        {name: "PA0008", description: "Basic pay"},
+                        {name: "HRP1000", description: "HR objects"},
+                        {name: "HRPTNNNN", description: "HR infotype clusters"}
+                    ]
+                },
+                "MM": {
+                    description: "Materials Management handles procurement, inventory management, warehouse management, and invoice verification. It ensures that materials are available in the right quality, quantity, and time.",
+                    submodules: [
+                        "Extended Warehouse Management", "External Services Management", 
+                        "Inventory/Valuations", "Inventory Management", "Invoice Verification", 
+                        "Logistics (General)", "Logistics Information System", 
+                        "Materials Planning", "Purchasing", "QM in MM", "Warehouse Management", 
+                        "Workflow"
+                    ],
+                    tables: [
+                        {name: "MARA", description: "Material master"},
+                        {name: "EKKO", description: "Purchase order headers"},
+                        {name: "EKPO", description: "Purchase order items"},
+                        {name: "MKPF", description: "Material document headers"},
+                        {name: "MSEG", description: "Material document items"}
+                    ]
+                },
+                "PM": {
+                    description: "Plant Maintenance manages the planning, processing, and completion of equipment maintenance activities. It helps in maintaining production equipment and utilities to prevent breakdowns.",
+                    submodules: [
+                        "Customizing", "Equipment and Technical Objects", "Information System", 
+                        "Internet Scenarios", "Maintenance Order Management", 
+                        "Maintenance Planning", "Maintenance Projects", "PM Processing", 
+                        "Preventative Maintenance", "Service Management", 
+                        "Structuring Technical Systems", "Work Clearance Management"
+                    ],
+                    tables: [
+                        {name: "EQUI", description: "Equipment master"},
+                        {name: "AFIH", description: "Maintenance order headers"},
+                        {name: "IFLOT", description: "Functional locations"},
+                        {name: "AUFK", description: "Order master data"},
+                        {name: "ILOA", description: "Technical object locations"}
+                    ]
+                },
+                "PLM": {
+                    description: "Product Lifecycle Management manages the entire lifecycle of a product from its conception to design, manufacturing, service, and disposal. It integrates people, data, processes, and business systems.",
+                    submodules: [
+                        "Basic Data for Process Manufacturing", "Classification", 
+                        "Document Management", "Engineering Change Management", 
+                        "Enterprise Content Management"
+                    ],
+                    tables: [
+                        {name: "MKAL", description: "Engineering change master"},
+                        {name: "DRAW", description: "Document info record"},
+                        {name: "PLKO", description: "Task list header"},
+                        {name: "STKO", description: "BOM header"},
+                        {name: "STPO", description: "BOM item"}
+                    ]
+                },
+                "PP": {
+                    description: "Production Planning handles manufacturing processes including production planning, execution, and control. It helps in optimizing resource utilization and production schedules.",
+                    submodules: [
+                        "Assembly Orders", "Capacity requirements", "Information System", 
+                        "KANBAN", "Make to Order", "Master Planning", "Plant Data Collection", 
+                        "PP – Processes", "PP for Process Industries", "Product Cost Planning", 
+                        "Production Orders", "Repetitive Manufacturing", 
+                        "Sales and Operations Planning"
+                    ],
+                    tables: [
+                        {name: "AFKO", description: "Production order header"},
+                        {name: "AFPO", description: "Production order item"},
+                        {name: "RESB", description: "Reservation items"},
+                        {name: "PLAF", description: "Production resources/tools"},
+                        {name: "MAST", description: "Material to BOM linkage"}
+                    ]
+                },
+                "PS": {
+                    description: "Project Systems manages complex projects with multiple operations, tasks, and resources. It supports the entire project lifecycle from planning to execution and closure.",
+                    submodules: [
+                        "Approval", "Basic Data", "Information System", "Operational Structures", 
+                        "Project Execution and Integration", "Project Planning", 
+                        "Results Analysis", "Work Breakdown Structure"
+                    ],
+                    tables: [
+                        {name: "PROJ", description: "Project definition"},
+                        {name: "PRPS", description: "WBS elements"},
+                        {name: "AFVC", description: "Operations"},
+                        {name: "COSP_BAK", description: "Cost totals"},
+                        {name: "COEJ", description: "Project actual postings"}
+                    ]
+                },
+                "QM": {
+                    description: "Quality Management ensures that products and processes meet quality standards. It supports quality planning, inspection, and control activities throughout the production process.",
+                    submodules: [
+                        "Certificates", "Control", "Inspections", "Notifications", "Planning", 
+                        "QM-IS", "Test Equipment Management"
+                    ],
+                    tables: [
+                        {name: "QALS", description: "Inspection lot header"},
+                        {name: "QAVE", description: "Usage decision"},
+                        {name: "QMEL", description: "Quality notifications"},
+                        {name: "QPMK", description: "Inspection characteristics"},
+                        {name: "INSM", description: "Inspection methods"}
+                    ]
+                },
+                "SD": {
+                    description: "Sales and Distribution manages the sale and distribution of products and services. It handles sales order processing, delivery, billing, and customer management.",
+                    submodules: [
+                        "Billing", "Credit Control", "Electronic Data Interchange", 
+                        "Foreign Trade", "Internet", "Master Data", "QM in SD", "Sales", 
+                        "Sales Information System", "Sales Support", "Shipping", 
+                        "Special Business Transactions", "Transportation"
+                    ],
+                    tables: [
+                        {name: "VBAK", description: "Sales document header"},
+                        {name: "VBAP", description: "Sales document item"},
+                        {name: "LIKP", description: "Delivery header"},
+                        {name: "LIPS", description: "Delivery item"},
+                        {name: "KNA1", description: "Customer master general data"}
+                    ]
+                },
+                "SEM": {
+                    description: "Strategic Enterprise Management provides tools for strategic planning, financial consolidation, business information collection, and performance monitoring. It assists in aligning operational activities with strategic goals.",
+                    submodules: [
+                        "Business Consolidation", "Business Information Collection", 
+                        "Business Planning and Simulation", "Corporate Performance Monitor", 
+                        "Stakeholder Relationship Management"
+                    ],
+                    tables: [
+                        {name: "SEMM_KPI", description: "Key performance indicators"},
+                        {name: "SEMPG", description: "Performance goals"},
+                        {name: "SEMM_TARG", description: "Target values"},
+                        {name: "SEMBC", description: "Business consolidation"},
+                        {name: "SEMPLAN", description: "Strategic plans"}
+                    ]
+                },
+                "SCM": {
+                    description: "Supply Chain Management optimizes the flow of materials, information, and finances from suppliers to customers. It integrates demand planning, inventory management, and distribution processes.",
+                    submodules: [
+                        "Advance Planning and Optimization", "Event Management", 
+                        "Forecasting and Replenishment", "Inventory Collaboration Hub", 
+                        "Product Development and Life Cycle Management", "SCM Basis", 
+                        "SCM Process and Business Scenarios"
+                    ],
+                    tables: [
+                        {name: "MDLV", description: "ATP: Material overview"},
+                        {name: "MCH1", description: "Batches"},
+                        {name: "MARC", description: "Plant data for material"},
+                        {name: "VBBE", description: "Sales requirements"},
+                        {name: "PBED", description: "MRP elements"}
+                    ]
+                },
+                "SRM": {
+                    description: "Supplier Relationship Management focuses on procurement processes and supplier interactions. It helps in strategic sourcing, supplier evaluation, and contract management.",
+                    submodules: [
+                        "Catalogue Content Management", "Plan Driven Procurement", 
+                        "Self Service Procurement", "Service Procurement", "Spend Analysis", 
+                        "Strategic Sourcing"
+                    ],
+                    tables: [
+                        {name: "BBP_PD_BID", description: "Bidding data"},
+                        {name: "BBP_PD_ORG", description: "Organization master"},
+                        {name: "BBP_PDIGP", description: "Items general"},
+                        {name: "EBAN", description: "Purchase requisitions"},
+                        {name: "LFA1", description: "Vendor master general data"}
+                    ]
+                },
+                "TR": {
+                    description: "Treasury manages financial transactions including cash management, funds management, and risk management. It helps in optimizing investment and financing decisions.",
+                    submodules: [
+                        "Cash Management", "Electronic banking", "Funds Management", 
+                        "Information System", "Loans Management", "Market Risk Management", 
+                        "Treasury Management"
+                    ],
+                    tables: [
+                        {name: "BSEC", description: "Securities transactions"},
+                        {name: "BSED", description: "Securities master"},
+                        {name: "BSEG_ADD", description: "FI document segments"},
+                        {name: "FDES", description: "Financial transactions"},
+                        {name: "FDTC", description: "Treasury payment program"}
+                    ]
+                }
+            }
+        };
+
+        // Initialize UI
+        document.addEventListener('DOMContentLoaded', function() {
+            // Populate sidebar navigation
+            populateSidebar();
+            
+            // Populate module content
+            populateModules();
+            
+            // Setup dark mode toggle
+            setupDarkMode();
+            
+            // Setup search functionality
+            setupSearch();
+            
+            // Setup export functionality
+            setupExport();
+            
+            // Show module count
+            const totalModules = Object.keys(sapModulesData.technical).length + 
+                               Object.keys(sapModulesData.functional).length;
+            document.getElementById('moduleCount').textContent = totalModules + ' Modules';
+        });
+
+        // Populate sidebar navigation
+        function populateSidebar() {
+            const techNav = document.getElementById('techModuleNav');
+            const funcNav = document.getElementById('funcModuleNav');
+            
+            // Technical modules
+            for (const [key, module] of Object.entries(sapModulesData.technical)) {
+                const link = document.createElement('a');
+                link.className = 'nav-link';
+                link.href = `#${key}`;
+                link.textContent = key;
+                link.dataset.module = key;
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                    
+                    // Set active class
+                    document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+                    this.classList.add('active');
+                });
+                techNav.appendChild(link);
+            }
+            
+            // Functional modules
+            for (const [key, module] of Object.entries(sapModulesData.functional)) {
+                const link = document.createElement('a');
+                link.className = 'nav-link';
+                link.href = `#${key}`;
+                link.textContent = key;
+                link.dataset.module = key;
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                    
+                    // Set active class
+                    document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+                    this.classList.add('active');
+                });
+                funcNav.appendChild(link);
+            }
+        }
+
+        // Populate module content
+        function populateModules() {
+            const technicalModules = document.getElementById('technicalModules');
+            const functionalModules = document.getElementById('functionalModules');
+            
+            // Technical modules
+            for (const [key, module] of Object.entries(sapModulesData.technical)) {
+                const moduleCard = createModuleCard(key, module, 'tech');
+                technicalModules.appendChild(moduleCard);
+            }
+            
+            // Functional modules
+            for (const [key, module] of Object.entries(sapModulesData.functional)) {
+                const moduleCard = createModuleCard(key, module, 'func');
+                functionalModules.appendChild(moduleCard);
+            }
+        }
+
+        // Create module card
+        function createModuleCard(key, module, type) {
+            const col = document.createElement('div');
+            col.className = 'col-12';
+            
+            const card = document.createElement('div');
+            card.className = 'card module-card';
+            card.id = key;
+            
+            const header = document.createElement('div');
+            header.className = 'module-header';
+            header.innerHTML = `
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4>
+                        ${key}
+                        <span class="badge ${type === 'tech' ? 'badge-tech' : 'badge-func'} ms-2">
+                            ${type === 'tech' ? 'Technical' : 'Functional'}
+                        </span>
+                    </h4>
+                    <button class="btn btn-sm btn-outline-primary toggle-content">
+                        <i class="bi bi-chevron-down"></i>
+                    </button>
+                </div>
+            `;
+            
+            const content = document.createElement('div');
+            content.className = 'module-content';
+            
+            // Module description
+            const description = document.createElement('div');
+            description.className = 'module-description mb-4';
+            description.innerHTML = `
+                <p>${module.description}</p>
+            `;
+            
+            // Submodules section
+            const submodules = document.createElement('div');
+            submodules.className = 'submodule mb-4';
+            submodules.innerHTML = `
+                <h5 class="submodule-header">Submodules (${module.submodules.length})</h5>
+                <div class="row">
+                    ${module.submodules.map(submodule => `
+                        <div class="col-md-6 col-lg-4 mb-2">
+                            <div class="submodule-item">
+                                <i class="bi bi-box me-2"></i>${submodule}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            // Tables section
+            const tables = document.createElement('div');
+            tables.className = 'tables mb-3';
+            tables.innerHTML = `
+                <h5 class="submodule-header">Key Tables</h5>
+                <div class="table-list">
+                    ${module.tables.map(table => `
+                        <div class="table-item">
+                            <div class="fw-bold text-primary">${table.name}</div>
+                            <div class="small">${table.description}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            content.appendChild(description);
+            content.appendChild(submodules);
+            content.appendChild(tables);
+            
+            card.appendChild(header);
+            card.appendChild(content);
+            
+            col.appendChild(card);
+            
+            // Toggle content on header click
+            header.querySelector('.toggle-content').addEventListener('click', function() {
+                const icon = this.querySelector('i');
+                const content = this.closest('.module-card').querySelector('.module-content');
+                
+                if (content.style.display === 'block') {
+                    content.style.display = 'none';
+                    icon.classList.replace('bi-chevron-up', 'bi-chevron-down');
+                } else {
+                    content.style.display = 'block';
+                    icon.classList.replace('bi-chevron-down', 'bi-chevron-up');
+                }
+            });
+            
+            return col;
+        }
+
+        // Setup dark mode toggle
+        function setupDarkMode() {
+            const toggle = document.getElementById('darkModeToggle');
+            const icon = toggle.querySelector('i');
+            
+            toggle.addEventListener('click', function() {
+                document.body.classList.toggle('dark-mode');
+                
+                if (document.body.classList.contains('dark-mode')) {
+                    icon.classList.replace('bi-moon', 'bi-sun');
+                } else {
+                    icon.classList.replace('bi-sun', 'bi-moon');
+                }
+            });
+        }
+
+        // Setup search functionality
+        function setupSearch() {
+            const searchInput = document.getElementById('searchInput');
+            
+            searchInput.addEventListener('input', function() {
+                const query = this.value.toLowerCase();
+                
+                // Clear highlights
+                document.querySelectorAll('.highlight').forEach(el => {
+                    const parent = el.parentNode;
+                    parent.innerHTML = parent.textContent;
+                });
+                
+                if (query.length < 2) {
+                    // Show all modules
+                    document.querySelectorAll('.module-card').forEach(card => {
+                        card.style.display = 'block';
+                    });
+                    return;
+                }
+                
+                document.querySelectorAll('.module-card').forEach(card => {
+                    const moduleText = card.textContent.toLowerCase();
+                    const moduleContent = card.querySelector('.module-content');
+                    
+                    if (moduleText.includes(query)) {
+                        card.style.display = 'block';
+                        moduleContent.style.display = 'block';
+                        card.querySelector('.toggle-content i').classList.replace('bi-chevron-down', 'bi-chevron-up');
+                        
+                        // Highlight matching text
+                        highlightText(card, query);
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        }
+
+        // Highlight matching text
+        function highlightText(container, query) {
+            const textNodes = [];
+            
+            function getTextNodes(node) {
+                if (node.nodeType === 3) {
+                    textNodes.push(node);
+                } else {
+                    for (let i = 0; i < node.childNodes.length; i++) {
+                        getTextNodes(node.childNodes[i]);
+                    }
+                }
+            }
+            
+            getTextNodes(container);
+            
+            textNodes.forEach(node => {
+                const text = node.nodeValue;
+                const lowerText = text.toLowerCase();
+                const index = lowerText.indexOf(query);
+                
+                if (index !== -1) {
+                    const span = document.createElement('span');
+                    const before = document.createTextNode(text.substring(0, index));
+                    const match = document.createElement('span');
+                    match.className = 'highlight';
+                    match.appendChild(document.createTextNode(text.substring(index, index + query.length)));
+                    const after = document.createTextNode(text.substring(index + query.length));
+                    
+                    span.appendChild(before);
+                    span.appendChild(match);
+                    span.appendChild(after);
+                    
+                    node.parentNode.replaceChild(span, node);
+                }
+            });
+        }
+
+        // Setup export functionality
+        function setupExport() {
+            document.getElementById('exportCSV').addEventListener('click', function() {
+                let csv = 'Type,Module,Submodule,Table,Description\n';
+                
+                // Add technical modules
+                for (const [key, module] of Object.entries(sapModulesData.technical)) {
+                    // Module description row
+                    csv += `Technical,${key},"${module.description.replace(/"/g, '""')}","",""\n`;
+                    
+                    // Submodule rows
+                    module.submodules.forEach(submodule => {
+                        csv += `Technical,${key},"","${submodule}",""\n`;
+                    });
+                    
+                    // Table rows
+                    module.tables.forEach(table => {
+                        csv += `Technical,${key},"","${table.name}","${table.description.replace(/"/g, '""')}"\n`;
+                    });
+                }
+                
+                // Add functional modules
+                for (const [key, module] of Object.entries(sapModulesData.functional)) {
+                    // Module description row
+                    csv += `Functional,${key},"${module.description.replace(/"/g, '""')}","",""\n`;
+                    
+                    // Submodule rows
+                    module.submodules.forEach(submodule => {
+                        csv += `Functional,${key},"","${submodule}",""\n`;
+                    });
+                    
+                    // Table rows
+                    module.tables.forEach(table => {
+                        csv += `Functional,${key},"","${table.name}","${table.description.replace(/"/g, '""')}"\n`;
+                    });
+                }
+                
+                // Create and download CSV file
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.setAttribute('href', url);
+                link.setAttribute('download', 'sap_modules_tables.csv');
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+            
+            document.getElementById('exportPDF').addEventListener('click', function() {
+                alert("PDF export functionality would be implemented here with a library like jsPDF");
+            });
+        }
+    </script>
+</body>
+</html>
